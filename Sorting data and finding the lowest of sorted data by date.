@@ -1,0 +1,34 @@
+Julia conducted a 15 days of learning SQL contest. The start date of the contest was March 01, 2016 and the end date was March 15, 2016.
+Write a query to print total number of unique hackers who made at least 1 submission each day (starting on the first day of the contest), 
+and find the hacker_id and name of the hacker who made maximum number of submissions each day. 
+If more than one such hacker has a maximum number of submissions, print the lowest hacker_id. 
+The query should print this information for each day of the contest, sorted by the date.
+
+SELECT submission_date,
+(SELECT COUNT(DISTINCT hacker_id) 
+FROM submissions s2 
+WHERE s2.submission_date = s1.submission_date AND
+(SELECT COUNT(DISTINCT s3.submission_date) FROM submissions s3 WHERE s3.hacker_id = s2.hacker_id AND s3.submission_date < s1.submission_date) = DATEDIFF(s1.submission_date, "2016-03-01")),
+(SELECT hacker_id FROM submissions s2 WHERE s2.submission_date = s1.submission_date
+GROUP BY hacker_id ORDER BY COUNT(submission_id) DESC, hacker_id limit 1)AS TMP,
+(SELECT name FROM hackers WHERE hacker_id = TMP)
+FROM
+(SELECT DISTINCT submission_date FROM submissions) s1
+GROUP BY submission_date;
+
+Output
+2016-03-01 112 81314 Denise 
+2016-03-02 59 39091 Ruby 
+2016-03-03 51 18105 Roy 
+2016-03-04 49 533 Patrick 
+2016-03-05 49 7891 Stephanie 
+2016-03-06 49 84307 Evelyn 
+2016-03-07 35 80682 Deborah 
+2016-03-08 35 10985 Timothy 
+2016-03-09 35 31221 Susan 
+2016-03-10 35 43192 Bobby 
+2016-03-11 35 3178 Melissa 
+2016-03-12 35 54967 Kenneth 
+2016-03-13 35 30061 Julia 
+2016-03-14 35 32353 Rose 
+2016-03-15 35 27789 Helen 
